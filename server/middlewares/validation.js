@@ -15,20 +15,23 @@ module.exports = {
     },
     verifyToken: async (req, res, next) => {
         const bearerHeader = req.headers["authorization"]
-        const bearer = bearerHeader.split(" ")[0]
-        const token = bearerHeader.split(" ")[1]
-        
-        if (token && bearer === "Bearer") {
-            jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
-                if (err) {
-                    res.status(403).json(err)
-                } else {
-                    req.userName = authData
-                    next()
-                }
-            })
-        } else {
-            res.status(403).json({ message: "Invalid token or bearer"})
+        if (bearerHeader) {
+            const bearer = bearerHeader.split(" ")[0]
+            const token = bearerHeader.split(" ")[1]
+
+
+            if (token && bearer === "Bearer") {
+                jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
+                    if (err) {
+                        res.status(403).json(err)
+                    } else {
+                        req.userName = authData
+                        next()
+                    }
+                })
+            } else {
+                res.status(403).json({ message: "Invalid token or bearer" })
+            }
         }
     },
     verifyLogin: async (req, res, next) => {
@@ -40,10 +43,10 @@ module.exports = {
             if (passwordIsValid) {
                 next()
             } else {
-                res.status(403).json({ message: "Incorrect username or password"})
+                res.status(403).json({ message: "Incorrect username or password" })
             }
         } else {
-            res.status(403).json({ message: "Incorrect username or password"})
-        }  
+            res.status(403).json({ message: "Incorrect username or password" })
+        }
     }
 }

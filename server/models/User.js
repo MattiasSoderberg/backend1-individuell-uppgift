@@ -8,8 +8,11 @@ const userSchema = mongoose.Schema({
     isLoggedIn: Boolean,
     profile: {
         email: String,
-        imageUrl: String,
-        bio: String
+        bio: String,
+        image: {
+            url: String,
+            mimetype: String
+        }
     },
     follows: Array,
     followers: Array
