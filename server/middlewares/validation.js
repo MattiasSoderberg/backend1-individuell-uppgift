@@ -3,10 +3,10 @@ const User = require("../models/User")
 const { comparePassword } = require("../helpers")
 
 module.exports = {
-    verifyUserName: async (req, res, next) => {
-        const userName = req.body.userName.toLowerCase()
-        const user = await User.findOne({ userName })
-
+    verifyUsername: async (req, res, next) => {
+        const username = req.body.username.toLowerCase()
+        const user = await User.findOne({ username })
+        
         if (user) {
             res.status(403).json({ message: "Username already exists" })
         } else {
@@ -18,14 +18,13 @@ module.exports = {
         if (bearerHeader) {
             const bearer = bearerHeader.split(" ")[0]
             const token = bearerHeader.split(" ")[1]
-
-
+            
             if (token && bearer === "Bearer") {
                 jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
                     if (err) {
                         res.status(403).json(err)
                     } else {
-                        req.userName = authData
+                        req.user = authData
                         next()
                     }
                 })
@@ -48,5 +47,13 @@ module.exports = {
         } else {
             res.status(403).json({ message: "Incorrect username or password" })
         }
+    },
+    checkEmptyFields: (req, res, next) => {
+        Object.values(req.body).forEach(field => {
+            if (!field) {
+                res.status(400).json({ message: "All fields requiered"})
+            }
+        })
+        next()
     }
 }
