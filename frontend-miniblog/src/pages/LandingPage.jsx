@@ -16,6 +16,7 @@ export default function LandingPage() {
             "Content-Type": "application/json"
         }
         const payload = { username, password }
+        console.log(payload)
 
         fetch(url, {
             method: "POST",

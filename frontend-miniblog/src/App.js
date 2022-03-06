@@ -1,37 +1,44 @@
 import React, { useState, useEffect, createContext } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useNavigate } from "react-router-dom"
 import Navigation from "./components/Navigation";
 import './App.css';
 import LandingPage from "./pages/LandingPage";
 import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
-import ProfilePage from "./pages/PofilePage"
+import ProfilePage from "./pages/ProfilePage"
 import { BASE_URL } from "./utils";
+import UsersPage from "./pages/UsersPage";
 
 const UserContext = createContext()
 
 function App() {
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!user) {
       const token = localStorage.getItem("micro-blog")
-      const url = `${BASE_URL}/user/me`
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-      fetch(url, {
-        headers: headers
-      })
-        .then(res => {
-          if (res.ok) {
-            return res.json()
-          } else {
-            console.log("Error:", res.statusText)
-          }
+      if (token) {
+        const url = `${BASE_URL}/user/me`
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+        fetch(url, {
+          headers: headers
         })
-        .then(data => setUser(data))
+          .then(res => {
+            if (res.ok) {
+              return res.json()
+            } else {
+              console.log("Error:", res.statusText)
+            }
+          })
+          .then(data => {
+            setUser(data)
+            navigate("/home")
+          })
+      }
     }
   }, [user])
 
@@ -46,7 +53,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/home" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/:username" element={<ProfilePage />} />
           </Routes>
         </div>
       </div>

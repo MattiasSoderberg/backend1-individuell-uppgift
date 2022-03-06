@@ -1,19 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { UserContext } from '../App'
 import { BASE_URL } from '../utils'
 
 export default function HomePage() {
     const [newPost, setNewPost] = useState("")
     const [posts, setPosts] = useState(null)
+    const navigate = useNavigate()
     const { user } = useContext(UserContext)
 
     useEffect(() => {
-        const token = localStorage.getItem("micro-blog")
+        fetchPosts()
+    }, [])
+
+    const fetchPosts = () => {
+        // const token = localStorage.getItem("micro-blog")
         const url = `${BASE_URL}/posts`
         const headers = {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
         }
         fetch(url, {
             headers: headers
@@ -26,7 +30,7 @@ export default function HomePage() {
                 }
             })
             .then(data => setPosts(data))
-    }, [])
+    }
 
     const handleOnSubmit = (e) => {
         e.preventDefault()
@@ -46,7 +50,7 @@ export default function HomePage() {
             body: JSON.stringify(payload)
         })
             .then(res => res.json())
-            .then(data => console.log(data))
+            .then(data => fetchPosts())
         setNewPost("")
     }
 
@@ -81,7 +85,7 @@ export default function HomePage() {
                         </div>
                         <div className="col-md-8">
                             <div className="card-body">
-                                <Link to={`/profile/${post.author._id}`}><h5 className="card-title">{post.author.username}</h5></Link>
+                                <Link to={`/${post.author.username}`}><h5 className="card-title">{post.author.username}</h5></Link>
                                 <p className="card-text">{post.text}</p>
                                 <p className="card-text"><small className="text-muted">{post.time}</small></p>
                             </div>
