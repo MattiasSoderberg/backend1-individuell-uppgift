@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const User = require("../models/User")
+const TokenBlacklist = require("../models/TokenBlacklist")
 const { comparePassword } = require("../helpers")
 
 module.exports = {
@@ -18,8 +19,10 @@ module.exports = {
         if (bearerHeader) {
             const bearer = bearerHeader.split(" ")[0]
             const token = bearerHeader.split(" ")[1]
-            
-            if (token && bearer === "Bearer") {
+            const blacklistedToken = await TokenBlacklist.findOne({ token })
+            console.log(blacklistedToken)
+
+            if (token && bearer === "Bearer" && !blacklistedToken) {
                 jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
                     if (err) {
                         res.status(403).json(err)
