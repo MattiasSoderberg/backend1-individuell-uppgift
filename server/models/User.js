@@ -14,9 +14,9 @@ const userSchema = mongoose.Schema({
             mimetype: String
         }
     },
-    follows: Array,
-    followers: Array,
-    posts: Array
+    follows: [mongoose.Types.ObjectId],
+    followers: [mongoose.Types.ObjectId],
+    posts: [mongoose.Types.ObjectId]
 })
 
 userSchema.pre("save", async function(next) {
