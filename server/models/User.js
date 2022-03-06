@@ -19,10 +19,8 @@ const userSchema = mongoose.Schema({
     posts: Array
 })
 
-userSchema.pre(
-    "save",
-    async function(next) {
-        if (this.password) {
+userSchema.pre("save", async function(next) {
+        if (this.password && this.isNew) {
             const hash = await bcrypt.hash(this.password, 10)
             this.password = hash
             next()
