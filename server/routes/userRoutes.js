@@ -14,12 +14,22 @@ const { verifyUsername, verifyLogin, verifyToken, checkEmptyFields } = require("
 
 // Requires header auth
 userRouter.get("/me", verifyToken, async (req, res) => {
-    
+
     const user = await User.findOne({ _id: req.user.id })
 
     if (user) {
         const posts = await Post.find({ author: user._id }).sort({ time: -1 })
-        res.status(200).json({ user, posts })
+        const returnData = {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            follows: user.follows,
+            followers: user.followers,
+            profile: user.profile,
+            posts
+        }
+        res.status(200).json(returnData)
     } else {
         res.status(400).json({ message: "Not found" })
     }
@@ -36,7 +46,7 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
             user.profile = req.body
         }
         if (file) {
-            console.log(file)
+            // console.log(file)
             user.profile.image = {
                 mimetype: file.mimetype,
                 url: file.path
@@ -54,7 +64,7 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
 
 // Creates a user
 userRouter.post("/create", verifyUsername, checkEmptyFields, async (req, res) => {
-    const {firstName, lastName, password} = req.body
+    const { firstName, lastName, password } = req.body
     const username = req.body.username.toLowerCase()
     const user = new User({
         firstName,
@@ -69,9 +79,10 @@ userRouter.post("/create", verifyUsername, checkEmptyFields, async (req, res) =>
 // username and password
 userRouter.post("/login", checkEmptyFields, async (req, res) => {
     const { username, password } = req.body
+    // console.log(username, password) //
     const user = await User.login(username, password)
     if (user) {
-        jwt.sign({username, id: user._id.toString()}, process.env.JWT_SECRET, (err, token) => {
+        jwt.sign({ username, id: user._id.toString() }, process.env.JWT_SECRET, (err, token) => {
             if (err) {
                 res.status(401).json(err)
             } else {
@@ -86,27 +97,31 @@ userRouter.post("/login", checkEmptyFields, async (req, res) => {
 userRouter.get("/logout", verifyToken, async (req, res) => {
     const activeToken = req.headers.authorization.split(" ")[1]
 
-    const blacklist = await TokenBlacklist.find()
-    if (await TokenBlacklist.find().length === 0) {
-        console.log("hej")
-        res.status(200).json({ message: "Logged out" })
-    } else {
-        res.status(400).json({ message: "Something went wrong" })
-    }
+    // const blacklist = await TokenBlacklist.find()
+    // if (await TokenBlacklist.find().length === 0) {
+    //     console.log("hej")
+    //     res.status(200).json({ message: "Logged out" })
+    // } else {
+    //     res.status(400).json({ message: "Something went wrong" })
+    // }
 
     // console.log(blacklist)
 
 
 })
 
-userRouter.get("/:id", async (req, res) => {
-    const id = req.params.id.toString()
-    const user = await User.findOne({ _id: id })
+userRouter.get("/:username", async (req, res) => {
+    const { username } = req.params
+    const user = await User.findOne({ username })
     if (user) {
         const posts = await Post.find({ author: user._id })
         const returnData = {
+            _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
+            username: user.username,
+            follows: user.follows,
+            followers: user.followers,
             profile: user.profile,
             posts
         }
@@ -120,14 +135,24 @@ userRouter.get("/:id", async (req, res) => {
 
 userRouter.get("/:id/follow", verifyToken, async (req, res) => {
     const { id } = req.params
-    const username = req.username
     const user = await User.findById({ _id: id })
-    const followingUser = await User.findOne({ username })
+    const followingUser = await User.findOne({ _id: req.user.id })
     followingUser.follows.push(user._id)
     user.followers.push(followingUser._id)
     await followingUser.save()
     await user.save()
     res.status(201).json({ message: `Following user ${user._id}` })
+})
+
+userRouter.get("/:id/unfollow", verifyToken, async (req, res) => {
+    const { id } = req.params
+    const user = await User.findOne({ _id: id })
+    const followingUser = await User.findOne({ _id: req.user.id })
+    followingUser.follows.pull(user._id)
+    user.followers.pull(followingUser._id)
+    await followingUser.save()
+    await user.save()
+    res.status(201).json({ message: `Unfollowing user ${id}` })
 })
 
 module.exports = userRouter
