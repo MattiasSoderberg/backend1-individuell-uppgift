@@ -7,16 +7,16 @@ export default function Navigation() {
   const { user, setUser } = useContext(UserContext)
 
   const handleLogout = () => {
-    // const url = `${BASE_URL}/user/logout`
-    // const token = localStorage.getItem("micro-blog")
-    // const headers = {
-    //   "Conent-Type": "application/json",
-    //   "Authorization": `Bearer ${token}`
-    // }
-    // fetch(url, {
-    //   headers: headers
-    // })
-    // .then(res => console.log(res))
+    const url = `${BASE_URL}/user/logout`
+    const token = localStorage.getItem("micro-blog")
+    const headers = {
+      "Conent-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
+    fetch(url, {
+      headers: headers
+    })
+    .then(res => console.log(res))
     localStorage.removeItem("micro-blog")
     setUser(null)
   }

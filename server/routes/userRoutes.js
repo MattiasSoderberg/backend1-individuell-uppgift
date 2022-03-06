@@ -8,8 +8,7 @@ const User = require("../models/User")
 const Post = require("../models/Post")
 const TokenBlacklist = require("../models/TokenBlacklist")
 const userRouter = express.Router()
-const { hashPassword } = require("../helpers")
-const { verifyUsername, verifyLogin, verifyToken, checkEmptyFields } = require("../middlewares/validation")
+const { verifyUsername, verifyToken, checkEmptyFields } = require("../middlewares/validation")
 
 
 // Requires header auth
@@ -79,7 +78,6 @@ userRouter.post("/create", verifyUsername, checkEmptyFields, async (req, res) =>
 // username and password
 userRouter.post("/login", checkEmptyFields, async (req, res) => {
     const { username, password } = req.body
-    // console.log(username, password) //
     const user = await User.login(username, password)
     if (user) {
         jwt.sign({ username, id: user._id.toString() }, process.env.JWT_SECRET, (err, token) => {
@@ -96,18 +94,11 @@ userRouter.post("/login", checkEmptyFields, async (req, res) => {
 
 userRouter.get("/logout", verifyToken, async (req, res) => {
     const activeToken = req.headers.authorization.split(" ")[1]
+    const token = new TokenBlacklist({ token: activeToken })
 
-    // const blacklist = await TokenBlacklist.find()
-    // if (await TokenBlacklist.find().length === 0) {
-    //     console.log("hej")
-    //     res.status(200).json({ message: "Logged out" })
-    // } else {
-    //     res.status(400).json({ message: "Something went wrong" })
-    // }
+    await token.save()
 
-    // console.log(blacklist)
-
-
+    res.status(200).json({ message: `Token: ${activeToken} added to blacklist` })
 })
 
 userRouter.get("/:username", async (req, res) => {
