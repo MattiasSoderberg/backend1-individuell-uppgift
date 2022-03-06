@@ -5,7 +5,7 @@ const User = require("../models/User")
 
 const postRouter = express.Router()
 
-postRouter.get("/", verifyToken, async (req, res) => {
+postRouter.get("/", async (req, res) => {
     const posts = await Post.find().populate("author").sort({ time: -1 })
     
     res.status(200).json(posts)
@@ -14,8 +14,6 @@ postRouter.get("/", verifyToken, async (req, res) => {
 postRouter.post("/", verifyToken, async (req, res) => {
     const { id } = req.user
     const { text } = req.body
-
-    console.log(req.body)
 
     if (id) {
         const user = await User.findOne({ _id: id })
