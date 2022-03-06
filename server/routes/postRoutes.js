@@ -7,7 +7,7 @@ const postRouter = express.Router()
 
 postRouter.get("/", async (req, res) => {
     const posts = await Post.find().populate("author").sort({ time: -1 })
-    
+
     res.status(200).json(posts)
 })
 
@@ -34,6 +34,14 @@ postRouter.post("/", verifyToken, async (req, res) => {
     } else {
         res.status(400).json({ message: "User not found" })
     }
+})
+
+postRouter.get("/follows", verifyToken, async (req, res) => {
+    const user = await User.findOne({ _id: req.user.id })
+    const posts = await Post.find({ author: { $in: user.follows } }).populate("author").sort({ time: -1 })
+    console.log(posts)
+
+    res.status(200).json(posts)
 })
 
 module.exports = postRouter

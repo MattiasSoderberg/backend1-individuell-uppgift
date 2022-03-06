@@ -14,22 +14,35 @@ export default function HomePage() {
     }, [])
 
     const fetchPosts = () => {
-        // const token = localStorage.getItem("micro-blog")
-        const url = `${BASE_URL}/posts`
-        const headers = {
-            "Content-Type": "application/json",
-        }
-        fetch(url, {
-            headers: headers
-        })
-            .then(res => {
-                if (res.ok) {
-                    return res.json()
-                } else {
-                    console.log("Error:", res.statusText)
-                }
+        if (!user) {
+            const url = `${BASE_URL}/posts`
+            const headers = {
+                "Content-Type": "application/json",
+            }
+            fetch(url, {
+                headers: headers
             })
+                .then(res => {
+                    if (res.ok) {
+                        return res.json()
+                    } else {
+                        console.log("Error:", res.statusText)
+                    }
+                })
+                .then(data => setPosts(data))
+        } else {
+            const url = `${BASE_URL}/posts/follows`
+            const token = localStorage.getItem("micro-blog")
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+            fetch(url, {
+                headers: headers
+            })
+            .then(res => res.json())
             .then(data => setPosts(data))
+        }
     }
 
     const handleOnSubmit = (e) => {
