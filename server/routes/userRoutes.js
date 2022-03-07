@@ -1,7 +1,5 @@
 const express = require("express")
-const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
-const path = require("path")
 const multer = require("multer")
 const upload = multer({ dest: "profileImages/" })
 const User = require("../models/User")
@@ -17,7 +15,7 @@ userRouter.get("/me", verifyToken, async (req, res) => {
     const user = await User.findOne({ _id: req.user.id })
 
     if (user) {
-        const posts = await Post.find({ author: user._id }).sort({ time: -1 })
+        const posts = await Post.find({ author: user._id }).populate("author").sort({ time: -1 })
         const returnData = {
             _id: user._id,
             firstName: user.firstName,
@@ -37,15 +35,18 @@ userRouter.get("/me", verifyToken, async (req, res) => {
 // Requires header auth
 userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res) => {
     try {
-        const username = req.username
+        const { id } = req.user
         const { file } = req
-        const user = await User.findOne({ username })
+        const { email, bio } = req.body
+        const user = await User.findOne({ _id: id })
 
-        if (req.body) {
-            user.profile = req.body
+        if (email) {
+            user.profile.email = email
+        }
+        if (bio) {
+            user.profile.bio = bio
         }
         if (file) {
-            // console.log(file)
             user.profile.image = {
                 mimetype: file.mimetype,
                 url: file.path
@@ -53,10 +54,10 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
         }
 
         await user.save()
-        res.status(200).json({ message: "kanon!" })
+        res.sendStatus(200)
     }
     catch (err) {
-        console.log(err)
+        console.log("Error catch", err)
         res.status(400).json(err)
     }
 })
@@ -105,7 +106,7 @@ userRouter.get("/:username", async (req, res) => {
     const { username } = req.params
     const user = await User.findOne({ username })
     if (user) {
-        const posts = await Post.find({ author: user._id })
+        const posts = await Post.find({ author: user._id }).populate("author").sort({ time: -1 })
         const returnData = {
             _id: user._id,
             firstName: user.firstName,
