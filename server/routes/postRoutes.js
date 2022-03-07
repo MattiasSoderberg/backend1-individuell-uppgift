@@ -1,5 +1,5 @@
 const express = require("express")
-const { verifyToken } = require("../middlewares/validation")
+const { verifyToken, checkPostLength } = require("../middlewares/validation")
 const Post = require("../models/Post")
 const User = require("../models/User")
 
@@ -11,7 +11,7 @@ postRouter.get("/", async (req, res) => {
     res.status(200).json(posts)
 })
 
-postRouter.post("/", verifyToken, async (req, res) => {
+postRouter.post("/", verifyToken, checkPostLength, async (req, res) => {
     const { id } = req.user
     const { text } = req.body
 
@@ -27,7 +27,7 @@ postRouter.post("/", verifyToken, async (req, res) => {
 
             await user.save()
             await post.save()
-            res.status(200).json({ message: "Post posted" })
+            res.status(200)
         } else {
             res.status(400).json({ message: "Post cannot be empty" })
         }
@@ -39,7 +39,6 @@ postRouter.post("/", verifyToken, async (req, res) => {
 postRouter.get("/follows", verifyToken, async (req, res) => {
     const user = await User.findOne({ _id: req.user.id })
     const posts = await Post.find({ author: { $in: user.follows } }).populate("author").sort({ time: -1 })
-    console.log(posts)
 
     res.status(200).json(posts)
 })
