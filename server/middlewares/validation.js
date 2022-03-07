@@ -20,7 +20,6 @@ module.exports = {
             const bearer = bearerHeader.split(" ")[0]
             const token = bearerHeader.split(" ")[1]
             const blacklistedToken = await TokenBlacklist.findOne({ token })
-            console.log(blacklistedToken)
 
             if (token && bearer === "Bearer" && !blacklistedToken) {
                 jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
@@ -58,5 +57,13 @@ module.exports = {
             }
         })
         next()
+    },
+    checkPostLength: (req, res, next) => {
+        const { text } = req.body
+        if (text.length > 140) {
+            res.status(400).json({ message: "Text can be max 140 characters"})
+        } else {
+            next()
+        }
     }
 }
