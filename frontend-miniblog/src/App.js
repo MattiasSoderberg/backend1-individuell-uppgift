@@ -8,11 +8,13 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage"
 import { BASE_URL } from "./utils";
 import UsersPage from "./pages/UsersPage";
+import EditProfile from "./components/EditProfile";
 
 const UserContext = createContext()
 
 function App() {
   const [user, setUser] = useState(null)
+  const [editProfileActive, setEditProfileActive] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -36,19 +38,20 @@ function App() {
           })
           .then(data => {
             setUser(data)
-            navigate("/home")
+            // navigate("/home")
           })
       }
     }
   }, [user])
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      <div className="row">
-        <div className="col-3">
+    <UserContext.Provider value={{ user, setUser, setEditProfileActive }}>
+      <div className="row mx-0 gap-4">
+        {editProfileActive && <EditProfile />}
+        <div className="offset-1 col-2">
           <Navigation />
         </div>
-        <div className="col-6">
+        <div className="col-5">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignupPage />} />

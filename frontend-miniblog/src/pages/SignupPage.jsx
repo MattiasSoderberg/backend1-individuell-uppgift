@@ -7,6 +7,7 @@ export default function SignupPage() {
     const [password, setPassword] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
 
     const navigate = useNavigate()
 
@@ -29,14 +30,14 @@ export default function SignupPage() {
             headers,
             body: JSON.stringify(payload)
         })
-        .then(res => {
-            if (res.ok) {
-                return res.json()
+        .then(res => res.json())
+        .then(data => {
+            if (data.message) {
+                setErrorMessage(data.message)
             } else {
-                console.log("Error:", res.statusText)
+                navigate("/")
             }
         })
-        .then(data => navigate("/"))
     }
   return (
     <div>
@@ -47,6 +48,8 @@ export default function SignupPage() {
             <input type="text" className="form-control mb-3" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
             <input type="text" className="form-control mb-3" placeholder="Firstname" value={firstName} onChange={e => setFirstName(e.target.value)} />
             <input type="text" className="form-control mb-3" placeholder="Lastname" value={lastName} onChange={e => setLastName(e.target.value)} />
+            {errorMessage && 
+            <p className="text-danger">{errorMessage}</p>}
             <button className="btn btn-primary mb-3">Signup!</button>
         </form>
     </div>

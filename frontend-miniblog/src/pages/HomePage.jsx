@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext } from '../App'
+import Post from '../components/Post'
 import { BASE_URL } from '../utils'
 
 export default function HomePage() {
     const [newPost, setNewPost] = useState("")
     const [posts, setPosts] = useState(null)
+    const [errorMessage, setErrorMessage] = useState("")
     const navigate = useNavigate()
     const { user } = useContext(UserContext)
 
@@ -40,15 +42,16 @@ export default function HomePage() {
             fetch(url, {
                 headers: headers
             })
-            .then(res => res.json())
-            .then(data => setPosts(data))
+                .then(res => res.json())
+                .then(data => {
+                    setPosts(data)
+                })
         }
     }
 
     const handleOnSubmit = (e) => {
         e.preventDefault()
 
-        console.log(newPost)
         const token = localStorage.getItem("micro-blog")
         const url = `${BASE_URL}/posts`
         const headers = {
@@ -63,8 +66,14 @@ export default function HomePage() {
             body: JSON.stringify(payload)
         })
             .then(res => res.json())
-            .then(data => fetchPosts())
-        setNewPost("")
+            .then(data => {
+                if (data.message) {
+                    setErrorMessage(data.message)
+                } else {
+                    fetchPosts()
+                    setNewPost("")
+                }
+            })
     }
 
     return (
@@ -72,17 +81,21 @@ export default function HomePage() {
             <h1>Home</h1>
 
             {user &&
-                <div className="card mb-1">
+                <div className="card mb-4">
                     <div className="row g-0">
-                        <div className="col-md-2">
-                            {/* <img src={`http://localhost:3001/${user.profile.image.url}`} class="img-fluid rounded-circle" alt="Profile" /> */}
+                        <div className="col-md-2 overflow-hidden m-2">
+                            {user.profile.image.url ?
+                                <img src={`http://localhost:3001/${user.profile.image.url}`} className="img-fluid" alt="Profile" />
+                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="No user" />}
                         </div>
-                        <div className="col-md-10">
+                        <div className="col-md-9">
                             <div className="card-body">
-                                <form onSubmit={handleOnSubmit}>
+                                <form className="mb-3" onSubmit={handleOnSubmit}>
                                     <textarea className="form-control-plaintext p-4" value={newPost} rows={4} placeholder="What's going on?" onChange={e => setNewPost(e.target.value)} />
                                     <button type="submit" className="btn btn-primary">Post</button>
                                 </form>
+                                {errorMessage &&
+                                <p className="text-danger">{errorMessage}</p>}
                             </div>
                         </div>
                     </div>
@@ -91,20 +104,7 @@ export default function HomePage() {
 
 
             {posts && posts.map(post => {
-                return <div key={post._id} className="card mb-1">
-                    <div className="row g-0">
-                        <div className="col-md-4">
-                            {/* <img src={`http://localhost:3001/${post.author.profile.image.url}`} class="img-fluid rounded-circle" alt="Profile" /> */}
-                        </div>
-                        <div className="col-md-8">
-                            <div className="card-body">
-                                <Link to={`/${post.author.username}`}><h5 className="card-title">{post.author.username}</h5></Link>
-                                <p className="card-text">{post.text}</p>
-                                <p className="card-text"><small className="text-muted">{post.time}</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                return <Post key={post._id} post={post} />
             })}
         </div>
     )

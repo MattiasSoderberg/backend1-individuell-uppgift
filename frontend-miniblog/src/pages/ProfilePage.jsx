@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from "react-router-dom"
 import { UserContext } from '../App'
+import Post from '../components/Post'
 import { BASE_URL } from '../utils'
-// import { BASE_URL } from '../utils'
 
 export default function PofilePage() {
     const [currentUser, setCurrentUser] = useState(null)
@@ -10,7 +10,7 @@ export default function PofilePage() {
     const [isFollowed, setIsFollowed] = useState(false)
 
     const { username } = useParams()
-    const { user } = useContext(UserContext)
+    const { user, setEditProfileActive } = useContext(UserContext)
 
     useEffect(() => {
         if (user && username && user.username !== username) {
@@ -46,7 +46,6 @@ export default function PofilePage() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 setIsFollowed(true)
             })
     }
@@ -68,6 +67,10 @@ export default function PofilePage() {
             })
     }
 
+    const handleOnEdit = () => {
+        setEditProfileActive(true)
+    }
+
     return (
         <> {currentUser &&
             <div>
@@ -75,12 +78,19 @@ export default function PofilePage() {
                 <p className="text-muted">{currentUser.posts.length} Posts</p>
                 <div className="card mb-1">
                     <div className="row g-0">
-                        <div className="col-md-4">
-                            {/* <img src={`http://localhost:3001/${currentUser.profile.image.url}`} class="img-fluid rounded-circle" alt="Profile" /> */}
+                        <div className="col-md-2 overflow-hidden m-2">
+                            {currentUser.profile.image.url ?
+                                <img src={`http://localhost:3001/${currentUser.profile.image.url}`} className="img-fluid" alt="Profile" />
+                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="Profile" />}
                         </div>
-                        <div className="col-md-8">
+                        <div className="col-md-9">
                             <div className="card-body">
-                                <h5 className="card-title">{currentUser.firstName} {currentUser.lastName}</h5>
+                                <div className="d-flex align-items-center">
+                                    <h5 className="card-title">{currentUser.firstName} {currentUser.lastName}</h5>
+                                    {isUser &&
+                                        <button onClick={handleOnEdit} className="btn btn-secondary rounded-pill ms-auto">Edit profile</button>
+                                    }
+                                </div>
                                 <p className="card-text">@{currentUser.username}</p>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div className="d-flex gap-2 align-items-center">
@@ -97,30 +107,22 @@ export default function PofilePage() {
 
                                     }
                                 </div>
+
                             </div>
                         </div>
+                        {currentUser.profile &&
+                            <div className="m-2">
+                                <h5>Bio</h5>
+                                <p>{currentUser.profile.bio}</p>
+                                <p>{currentUser.profile.email}</p>
+                            </div>
+                        }
                     </div>
                 </div>
-                {currentUser.profile &&
-                    <p>{currentUser.profile.bio}</p>
-                }
                 <div>
                     <h3>Posts</h3>
                     {currentUser.posts.length > 0 ? currentUser.posts.map(post => {
-                        return <div key={post._id} className="card mb-1">
-                            <div className="row g-0">
-                                <div className="col-md-4">
-                                    {/* <img src={`http://localhost:3001/${user.user.profile.image.url}`} class="img-fluid rounded-circle" alt="Profile" /> */}
-                                </div>
-                                <div className="col-md-8">
-                                    <div className="card-body">
-                                        <h5 className="card-title">{currentUser.username}</h5>
-                                        <p className="card-text">{post.text}</p>
-                                        <p className="card-text"><small className="text-muted">{post.time}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        return <Post key={post._id} post={post} />
                     })
                         : <p>No posts</p>}
                 </div>
