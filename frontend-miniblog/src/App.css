@@ -10,3 +10,11 @@
   position: absolute;
   z-index: 1;
 }
+
+.text-area {
+  resize: none;
+}
+
+.text-area:focus {
+  outline: none;
+}
