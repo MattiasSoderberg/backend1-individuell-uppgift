@@ -14,12 +14,13 @@ const UserContext = createContext()
 
 function App() {
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
   const [editProfileActive, setEditProfileActive] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     if (!user) {
-      const token = localStorage.getItem("micro-blog")
+      // const token = localStorage.getItem("micro-blog")
       if (token) {
         const url = `${BASE_URL}/user/me`
         const headers = {
@@ -37,15 +38,16 @@ function App() {
             }
           })
           .then(data => {
+            console.log("iasjdfijsidf")
             setUser(data)
             // navigate("/home")
           })
       }
     }
-  }, [user])
+  }, [user, token])
 
   return (
-    <UserContext.Provider value={{ user, setUser, setEditProfileActive }}>
+    <UserContext.Provider value={{ user, setUser, setToken, setEditProfileActive }}>
       <div className="row mx-0 gap-4">
         {editProfileActive && <EditProfile />}
         <div className="offset-1 col-2">

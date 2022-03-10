@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { UserContext } from '../App'
 import { BASE_URL } from '../utils'
 
 export default function Navigation() {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser, setToken } = useContext(UserContext)
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     const url = `${BASE_URL}/user/logout`
@@ -16,9 +17,13 @@ export default function Navigation() {
     fetch(url, {
       headers: headers
     })
-    .then(res => console.log(res))
-    localStorage.removeItem("micro-blog")
-    setUser(null)
+      .then(res => {
+        localStorage.removeItem("micro-blog")
+        navigate("/")
+        setToken(null)
+        setUser(null)
+      })
+
   }
 
   return (
