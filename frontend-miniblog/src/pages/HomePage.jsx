@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext } from '../App'
 import Post from '../components/Post'
@@ -11,11 +11,7 @@ export default function HomePage() {
     const navigate = useNavigate()
     const { user } = useContext(UserContext)
 
-    useEffect(() => {
-        fetchPosts()
-    }, [])
-
-    const fetchPosts = () => {
+    const fetchPosts = useCallback(() => {
         if (!user) {
             const url = `${BASE_URL}/posts`
             const headers = {
@@ -47,7 +43,11 @@ export default function HomePage() {
                     setPosts(data)
                 })
         }
-    }
+    }, [user])
+
+    useEffect(() => {
+        fetchPosts()
+    }, [fetchPosts])
 
     const handleOnSubmit = (e) => {
         e.preventDefault()
@@ -70,7 +70,7 @@ export default function HomePage() {
                 if (data.message) {
                     setErrorMessage(data.message)
                 } else {
-                    fetchPosts()
+                    // fetchPosts()
                     setNewPost("")
                 }
             })
@@ -91,8 +91,8 @@ export default function HomePage() {
                         <div className="col-md-9">
                             <div className="card-body">
                                 <form className="mb-3" onSubmit={handleOnSubmit}>
-                                    <textarea className="form-control-plaintext p-4" value={newPost} rows={4} placeholder="What's going on?" onChange={e => setNewPost(e.target.value)} />
-                                    <button type="submit" className="btn btn-primary">Post</button>
+                                    <textarea className="form-control-plaintext p-4 text-area mb-2" value={newPost} rows={4} placeholder="Write something" onChange={e => setNewPost(e.target.value)} />
+                                    <button type="submit" className="btn btn-primary rounded-pill px-4">Post</button>
                                 </form>
                                 {errorMessage &&
                                 <p className="text-danger">{errorMessage}</p>}

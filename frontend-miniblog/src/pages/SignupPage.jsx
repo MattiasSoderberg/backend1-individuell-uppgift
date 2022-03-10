@@ -5,8 +5,6 @@ import { BASE_URL } from '../utils'
 export default function SignupPage() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
     const navigate = useNavigate()
@@ -20,9 +18,7 @@ export default function SignupPage() {
         }
         const payload = {
             username,
-            password,
-            firstName,
-            lastName
+            password
         }
 
         fetch(url, {
@@ -32,25 +28,19 @@ export default function SignupPage() {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.message) {
-                setErrorMessage(data.message)
-            } else {
-                navigate("/")
-            }
+            navigate("/")
         })
     }
   return (
     <div>
-        <h1>Signup</h1>
+        <h1 className="mb-4">Signup</h1>
 
         <form onSubmit={handleOnSubmit}>
             <input type="text" className="form-control mb-3" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
             <input type="text" className="form-control mb-3" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-            <input type="text" className="form-control mb-3" placeholder="Firstname" value={firstName} onChange={e => setFirstName(e.target.value)} />
-            <input type="text" className="form-control mb-3" placeholder="Lastname" value={lastName} onChange={e => setLastName(e.target.value)} />
             {errorMessage && 
             <p className="text-danger">{errorMessage}</p>}
-            <button className="btn btn-primary mb-3">Signup!</button>
+            <button className="btn btn-primary mb-3 rounded-pill px-3">Sign up</button>
         </form>
     </div>
   )

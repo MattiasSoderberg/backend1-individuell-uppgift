@@ -22,7 +22,7 @@ export default function UsersPage() {
     <div>
         <h1>Users</h1>
         {users && users.map(user => {
-            return <Link key={user._id} to={`/${user.username}`}>{user.username}</Link>
+            return <Link key={user._id} to={`/${user.username}`}><p>{user.username}</p></Link>
         })}
     </div>
   )

@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from "react-router-dom"
+import { UserContext } from '../App'
 import { BASE_URL } from '../utils'
 
 export default function LandingPage() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
+    const { setToken } = useContext(UserContext)
 
     const navigate = useNavigate()
 
@@ -29,6 +31,7 @@ export default function LandingPage() {
                     setErrorMessage(data.message)
                 } else {
                     localStorage.setItem("micro-blog", data.token)
+                    setToken(data.token)
                     navigate("/home")
                 }
             })
@@ -49,7 +52,7 @@ export default function LandingPage() {
                 {errorMessage && 
                 <p className="text-danger">{errorMessage}</p>}
                 <button className="btn btn-primary mb-3">Login</button>
-                <p>Dont have an account? Sign up <Link to="/signup">here</Link></p>
+                <p>Don't have an account? Sign up <Link to="/signup">here</Link></p>
             </form>
         </div>
     )
