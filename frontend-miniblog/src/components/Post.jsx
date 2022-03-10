@@ -19,7 +19,7 @@ export default function Post({ post }) {
                     <div className="card-body">
                         <Link to={`/${post.author.username}`}><h5 className="card-title">{post.author.username}</h5></Link>
                         <p className="card-text">{post.text}</p>
-                        <p className="card-text"><small className="text-muted">{post.time}</small></p>
+                        <p className="card-text"><small className="text-muted">{post.createdAt.split("T")[0]} {post.createdAt.split("T")[1].slice(0, 8)}</small></p>
                     </div>
                 </div>
             </div>
