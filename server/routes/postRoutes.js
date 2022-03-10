@@ -20,7 +20,7 @@ postRouter.post("/", verifyToken, checkPostLength, async (req, res) => {
         if (text) {
             const post = new Post({
                 text,
-                time: new Date(),
+                time: Date.now(),
                 author: user._id
             })
             user.posts.push(post._id)
