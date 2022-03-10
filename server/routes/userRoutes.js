@@ -37,7 +37,7 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
     try {
         const { id } = req.user
         const { file } = req
-        const { email, bio } = req.body
+        const { firstName, lastName, email, bio } = req.body
         const user = await User.findOne({ _id: id })
 
         if (email) {
@@ -45,6 +45,12 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
         }
         if (bio) {
             user.profile.bio = bio
+        }
+        if (firstName) {
+            user.profile.firstName = firstName
+        }
+        if (lastName) {
+            user.profile.lastName = lastName
         }
         if (file) {
             user.profile.image = {
@@ -64,16 +70,14 @@ userRouter.patch("/me", verifyToken, upload.single("imageFile"), async (req, res
 
 // Creates a user
 userRouter.post("/create", verifyUsername, checkEmptyFields, async (req, res) => {
-    const { firstName, lastName, password } = req.body
+    const { password } = req.body
     const username = req.body.username.toLowerCase()
     const user = new User({
-        firstName,
-        lastName,
         username,
         password
     })
     await user.save()
-    res.status(201).json({ message: "User created" })
+    res.sendStatus(201)
 })
 
 // username and password
