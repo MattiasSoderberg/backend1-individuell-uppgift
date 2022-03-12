@@ -7,7 +7,7 @@ module.exports = {
     verifyUsername: async (req, res, next) => {
         const username = req.body.username.toLowerCase()
         const user = await User.findOne({ username })
-        
+
         if (user) {
             res.status(403).json({ message: "Username already exists" })
         } else {
@@ -51,17 +51,22 @@ module.exports = {
         }
     },
     checkEmptyFields: (req, res, next) => {
-        Object.values(req.body).forEach(field => {
-            if (!field) {
-                res.status(400).json({ message: "All fields requiered"})
+        let fieldsValid = true
+        Object.values(req.body).forEach(value => {
+            if (!value) {
+                fieldsValid = false
             }
         })
-        next()
+        if (fieldsValid) {
+            next()
+        } else {
+            res.status(400).json({ message: "All fields requiered" })
+        }
     },
     checkPostLength: (req, res, next) => {
         const { text } = req.body
         if (text.length > 140) {
-            res.status(400).json({ message: "Text can be max 140 characters"})
+            res.status(400).json({ message: "Text can be max 140 characters" })
         } else {
             next()
         }
