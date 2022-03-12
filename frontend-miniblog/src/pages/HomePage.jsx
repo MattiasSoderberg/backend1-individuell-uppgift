@@ -9,7 +9,7 @@ export default function HomePage() {
     const [posts, setPosts] = useState(null)
     const [errorMessage, setErrorMessage] = useState("")
     const navigate = useNavigate()
-    const { user } = useContext(UserContext)
+    const { user, setToken } = useContext(UserContext)
 
     const fetchPosts = useCallback(() => {
         if (!user) {
@@ -65,13 +65,17 @@ export default function HomePage() {
             headers: headers,
             body: JSON.stringify(payload)
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.message) {
-                    setErrorMessage(data.message)
-                } else {
-                    // fetchPosts()
+            .then(res => {
+                if (res.ok) {
                     setNewPost("")
+                } else {
+                    return res.json()
+                }
+            })
+            .then(data => {
+                if (data) {
+                    console.log(data.message)
+                    setErrorMessage(data.message)
                 }
             })
     }

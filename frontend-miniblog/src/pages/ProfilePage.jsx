@@ -10,7 +10,7 @@ export default function PofilePage() {
     const [isFollowed, setIsFollowed] = useState(false)
 
     const { username } = useParams()
-    const { user, setEditProfileActive } = useContext(UserContext)
+    const { user, setEditProfileActive, setToken } = useContext(UserContext)
 
     useEffect(() => {
         if (user && username && user.username !== username) {
@@ -30,11 +30,12 @@ export default function PofilePage() {
                     setIsFollowed(data.followers.includes(user._id))
                 })
         } else {
+            setToken(null)
             setCurrentUser(user)
             console.log(user)
             setIsUser(true)
         }
-    }, [user, username])
+    }, [user, username, setToken])
 
     const handleOnFollow = () => {
         const url = `${BASE_URL}/user/${currentUser._id}/follow`

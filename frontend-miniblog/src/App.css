@@ -18,3 +18,19 @@
 .text-area:focus {
   outline: none;
 }
+
+.navigation-link {
+  text-decoration: none;
+  font-size: 1.6rem;
+  padding: 0;
+  color: #000;
+}
+
+.navigation-link:hover {
+  color: #858585;
+}
+
+.nav-svg {
+  font-size: 2rem;
+  margin-right: 1rem;
+}

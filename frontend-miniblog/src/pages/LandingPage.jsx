@@ -51,7 +51,7 @@ export default function LandingPage() {
                 </div>
                 {errorMessage && 
                 <p className="text-danger">{errorMessage}</p>}
-                <button className="btn btn-primary mb-3">Login</button>
+                <button className="btn btn-primary mb-3 px-4 rounded-pill">Login</button>
                 <p>Don't have an account? Sign up <Link to="/signup">here</Link></p>
             </form>
         </div>

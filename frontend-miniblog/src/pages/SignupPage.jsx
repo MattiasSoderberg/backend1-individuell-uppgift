@@ -26,9 +26,17 @@ export default function SignupPage() {
             headers,
             body: JSON.stringify(payload)
         })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) {
+                navigate("/")
+            } else {
+                return res.json()
+            }
+        })
         .then(data => {
-            navigate("/")
+            if (data) {
+                setErrorMessage(data.message)
+            }
         })
     }
   return (

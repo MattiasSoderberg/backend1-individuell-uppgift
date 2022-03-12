@@ -9,6 +9,8 @@ import ProfilePage from "./pages/ProfilePage"
 import { BASE_URL } from "./utils";
 import UsersPage from "./pages/UsersPage";
 import EditProfile from "./components/EditProfile";
+import TagPage from "./pages/TagPage";
+import ExplorePage from "./pages/ExplorePage";
 
 const UserContext = createContext()
 
@@ -20,7 +22,7 @@ function App() {
 
   useEffect(() => {
     if (!user) {
-      // const token = localStorage.getItem("micro-blog")
+      const token = localStorage.getItem("micro-blog")
       if (token) {
         const url = `${BASE_URL}/user/me`
         const headers = {
@@ -38,7 +40,6 @@ function App() {
             }
           })
           .then(data => {
-            console.log("iasjdfijsidf")
             setUser(data)
             // navigate("/home")
           })
@@ -59,7 +60,9 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/:username" element={<ProfilePage />} />
+            <Route path="/tags/:tag" element={<TagPage />} />
           </Routes>
         </div>
       </div>
