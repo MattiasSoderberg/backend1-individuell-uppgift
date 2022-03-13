@@ -10,10 +10,10 @@ export default function PofilePage() {
     const [isFollowed, setIsFollowed] = useState(false)
 
     const { username } = useParams()
-    const { user, setEditProfileActive, setToken } = useContext(UserContext)
+    const { user, setEditProfileActive } = useContext(UserContext)
 
     useEffect(() => {
-        if (user && username && user.username !== username) {
+        if (username) {
             const url = `${BASE_URL}/user/${username}`
             const headers = {
                 "Content-Type": "application/json"
@@ -25,17 +25,15 @@ export default function PofilePage() {
                 .then(res => res.json())
                 .then(data => {
                     setCurrentUser(data)
-                    console.log(data)
-                    setIsUser(false)
-                    setIsFollowed(data.followers.includes(user._id))
+                    if (user) {
+                        if (user.username === username) {
+                            setIsUser(true)
+                        }
+                        setIsFollowed(data.followers.includes(user._id))
+                    }
                 })
-        } else {
-            setToken(null)
-            setCurrentUser(user)
-            console.log(user)
-            setIsUser(true)
         }
-    }, [user, username, setToken])
+    }, [user, username])
 
     const handleOnFollow = () => {
         const url = `${BASE_URL}/user/${currentUser._id}/follow`
@@ -89,7 +87,7 @@ export default function PofilePage() {
                                 <div className="d-flex align-items-center">
                                     <h5 className="card-title">@{currentUser.username}</h5>
                                     {isUser &&
-                                        <button onClick={handleOnEdit} className="btn btn-secondary rounded-pill ms-auto">Edit profile</button>
+                                        <button onClick={handleOnEdit} className="btn btn-outline-dark rounded-pill ms-auto">Edit profile</button>
                                     }
                                 </div>
                                 <p className="card-text">{currentUser.firstName} {currentUser.lastName}</p>
@@ -98,11 +96,11 @@ export default function PofilePage() {
                                         <p className="mb-0">{currentUser.follows.length} <span className="text-muted">Follows</span></p>
                                         <p className="mb-0">{currentUser.followers.length} <span className="text-muted">Followers</span></p>
                                     </div>
-                                    {!isUser &&
+                                    {!isUser && user &&
                                         <>
                                             {isFollowed ?
-                                                <button className="btn btn-secondary rounded-pill" onClick={handleOnUnfollow}>Unfollow</button>
-                                                : <button className="btn btn-primary rounded-pill" onClick={handleOnFollow}>Follow</button>
+                                                <button className="btn btn-secondary rounded-pill px-3" onClick={handleOnUnfollow}>Unfollow</button>
+                                                : <button className="btn btn-primary rounded-pill px-3" onClick={handleOnFollow}>Follow</button>
                                             }
                                         </>
 
