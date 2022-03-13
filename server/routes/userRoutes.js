@@ -5,6 +5,7 @@ const upload = multer({ dest: "profileImages/" })
 const User = require("../models/User")
 const Post = require("../models/Post")
 const TokenBlacklist = require("../models/TokenBlacklist")
+const { calculateTime } = require("../helpers")
 const userRouter = express.Router()
 const { verifyUsername, verifyToken, checkEmptyFields } = require("../middlewares/validation")
 
@@ -111,6 +112,9 @@ userRouter.get("/:username", async (req, res) => {
     const user = await User.findOne({ username })
     if (user) {
         const posts = await Post.find({ author: user._id }).populate("author").sort({ time: -1 })
+        posts.forEach(post => {
+            post.timeDisplay = calculateTime(post.time) || post.createdAt.toString().slice(0, 15)
+        })
         const returnData = {
             _id: user._id,
             firstName: user.firstName,
