@@ -17,16 +17,16 @@ export default function Post({ post }) {
                 }
                 <div className="col-md-8">
                     <div className="card-body">
-                        <Link to={`/${post.author.username}`}><h5 className="card-title">{post.author.username}</h5></Link>
+                        <Link className="post-heading-link" to={`/${post.author.username}`}><h5 className="card-title">{post.author.username}</h5></Link>
                         <p className="card-text">{post.text}</p>
-                        <p className="card-text"><small className="text-muted">{post.createdAt.split("T")[0]} {post.createdAt.split("T")[1].slice(0, 8)}</small></p>
+                        <p className="card-text"><small className="text-muted">Posted {post.timeDisplay}</small></p>
                     </div>
                     {post.tags.length > 0 &&
                         <div className="px-3 mb-3">
                             <h5>Tags</h5>
                             <div className="d-flex gap-2">
                                 {post.tags.map((tag, index) => {
-                                    return <Link key={index} to={`/tags/${tag}`}>#{tag}</Link>
+                                    return <Link className="tag-link" key={index} to={`/tags/${tag}`}>#{tag}</Link>
                                 })}
                             </div>
                         </div>

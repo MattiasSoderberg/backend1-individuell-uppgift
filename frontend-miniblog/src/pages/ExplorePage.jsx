@@ -24,7 +24,7 @@ export default function ExplorePage() {
             <h2>Explore tags</h2>
             <div className="d-flex gap-3">
                 {tags && tags.map(tag => {
-                    return <Link to={`/tags/${tag.tag}`}>#{tag.tag}</Link>
+                    return <Link className="tag-link" key={tag._id} to={`/tags/${tag.tag}`}>#{tag.tag}</Link>
                 })}
             </div>
         </div>

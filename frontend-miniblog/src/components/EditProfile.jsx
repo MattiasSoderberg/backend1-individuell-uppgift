@@ -36,7 +36,7 @@ export default function EditProfile() {
 
     return (
         <div className="overlay d-flex align-items-center">
-            <div className="col-3 mx-auto bg-light p-5">
+            <div className="col-3 mx-auto bg-light edit-shadow p-5">
                 <h3 className="mb-3">Edit Profile</h3>
                 <form action="" method='PATCH' encType="multipart/form-data">
                     <input type="text" className="form-control mb-3" placeholder="Firstname" value={firstName} onChange={e => setFirstName(e.target.value)} />
