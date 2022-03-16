@@ -90,7 +90,7 @@ export default function PofilePage() {
                                         <button onClick={handleOnEdit} className="btn btn-outline-dark rounded-pill ms-auto">Edit profile</button>
                                     }
                                 </div>
-                                <p className="card-text">{currentUser.firstName} {currentUser.lastName}</p>
+                                <p className="card-text">{currentUser.profile.firstName} {currentUser.profile.lastName}</p>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div className="d-flex gap-2 align-items-center">
                                         <p className="mb-0">{currentUser.follows.length} <span className="text-muted">Follows</span></p>
