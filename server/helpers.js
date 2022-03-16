@@ -29,6 +29,6 @@ module.exports = {
         if ((currentTime - createdAt) / 1000 < 60) return `${Math.round((currentTime - createdAt) / 1000)} seconds ago` // Seconds
         else if ((currentTime - createdAt) / 1000 / 60 < 60) return `${Math.round((currentTime - createdAt) / 1000 / 60)} minutes ago` // Minutes
         else if ((currentTime - createdAt) / 1000 / 3600 < 24) return `${Math.round((currentTime - createdAt) / 1000 / 3600)} hours ago` // Hours
-        else if ((currentTime - createdAt) / 1000 / 3600 / 24 < 7) return `${Math.round((currentTime - createdAt) / 1000 / 3600 / 24)}` // Days
+        else if ((currentTime - createdAt) / 1000 / 3600 / 24 < 7) return `${Math.round((currentTime - createdAt) / 1000 / 3600 / 24)} days ago` // Days
     }
 }
