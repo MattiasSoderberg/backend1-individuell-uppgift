@@ -1,9 +1,10 @@
 const express = require("express")
-const { verifyToken, checkPostLength } = require("../middlewares/validation")
+const { verifyToken, checkPostLength, checkEmptyFields } = require("../middlewares/validation")
 const Post = require("../models/Post")
 const User = require("../models/User")
 const Tag = require("../models/Tag")
 const { calculateTime } = require("../helpers")
+const Comment = require("../models/Comment")
 
 const postRouter = express.Router()
 
@@ -75,6 +76,28 @@ postRouter.get("/follows", verifyToken, async (req, res) => {
     }
 })
 
+postRouter.get("/:id", async (req, res) => {
+    const { id } = req.params
+    const post = await Post.findOne({ _id: id }).populate("author", "username")
+        .populate({
+            path: "comments",
+            populate: {
+                path: "author",
+                select: "username profile.firstName profile.lastName"
+            },
+            options: {
+                sort: { time: -1 }
+            }
+        })
+
+    if (post) {
+        res.status(200).json(post)
+    } else {
+        res.sendStatus(400)
+    }
+})
+
+
 postRouter.get("/:tag", async (req, res) => {
     const { tag } = req.params
     const posts = await Post.find({ tags: tag }).populate("author").sort({ time: -1 })
@@ -87,6 +110,47 @@ postRouter.get("/:tag", async (req, res) => {
     } else {
         res.status(400).json({ message: "No posts found" })
     }
+})
+
+postRouter.get("/:id/like", verifyToken, async (req, res) => {
+    const { id } = req.params
+    const post = await Post.findOne({ _id: req.params.id })
+    const userId = req.user.id
+    if (post && !post.likes.includes(userId)) {
+        post.likes.push(userId)
+        await post.save()
+    }
+
+    res.sendStatus(200)
+})
+
+postRouter.get("/:id/unlike", verifyToken, async (req, res) => {
+    const { id } = req.params
+    const post = await Post.findOne({ _id: id })
+    const userId = req.user.id
+
+    if (post && post.likes.includes(userId)) {
+        post.likes.pop(userId)
+        await post.save()
+    }
+
+    res.sendStatus(200)
+})
+
+postRouter.post("/:id/comment", verifyToken, checkEmptyFields, async (req, res) => {
+    const postId = req.params.id
+    const userId = req.user.id
+    const { text } = req.body
+    const post = await Post.findOne({ _id: postId })
+    const comment = new Comment({
+        author: userId,
+        text,
+        time: Date.now()
+    })
+    post.comments.push(comment._id)
+    await comment.save()
+    await post.save()
+    res.sendStatus(200)
 })
 
 module.exports = postRouter
