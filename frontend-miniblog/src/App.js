@@ -11,6 +11,8 @@ import UsersPage from "./pages/UsersPage";
 import EditProfile from "./components/EditProfile";
 import TagPage from "./pages/TagPage";
 import ExplorePage from "./pages/ExplorePage";
+import CommentInput from "./components/CommentInput";
+import PostDetailPage from "./pages/PostDetailPage";
 
 const UserContext = createContext()
 
@@ -18,6 +20,9 @@ function App() {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
   const [editProfileActive, setEditProfileActive] = useState(false)
+  const [commentActive, setCommentActive] = useState(false)
+  const [commentOrigin, setCommentOrigin] = useState(null)
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -48,9 +53,10 @@ function App() {
   }, [user, token])
 
   return (
-    <UserContext.Provider value={{ user, setUser, setToken, setEditProfileActive }}>
+    <UserContext.Provider value={{ user, setUser, setToken, setEditProfileActive, setCommentActive, setCommentOrigin }}>
       <div className="row mx-0 gap-4">
         {editProfileActive && <EditProfile />}
+        {commentActive && <CommentInput commentOrigin={commentOrigin} />}
         <div className="offset-1 col-2">
           <Navigation />
         </div>
@@ -62,6 +68,7 @@ function App() {
             <Route path="/users" element={<UsersPage />} />
             <Route path="/explore" element={<ExplorePage />} />
             <Route path="/:username" element={<ProfilePage />} />
+            <Route path="/:username/post/:id" element={<PostDetailPage />} />
             <Route path="/tags/:tag" element={<TagPage />} />
           </Routes>
         </div>
