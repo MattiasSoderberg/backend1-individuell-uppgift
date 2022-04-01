@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
-const User = require("../models/User")
-const TokenBlacklist = require("../models/TokenBlacklist")
+const { User } = require("../models/User")
+const { TokenBlacklist } = require("../models/TokenBlacklist")
 const { comparePassword } = require("../helpers")
 
 module.exports = {

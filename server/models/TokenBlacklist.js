@@ -4,4 +4,10 @@ const blacklistSchema = mongoose.Schema({
     token: String
 })
 
-module.exports = mongoose.model("TokenBlacklist", blacklistSchema)
+const TokenBlacklist = mongoose.model("TokenBlacklist", blacklistSchema)
+
+const insertToken = async (token) => {
+    return await TokenBlacklist.create({ token })
+}
+
+module.exports = { insertToken, TokenBlacklist }
