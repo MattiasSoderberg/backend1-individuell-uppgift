@@ -88,9 +88,9 @@ export default function HomePage() {
                 <div className="card mb-4">
                     <div className="row g-0">
                         <div className="col-md-2 overflow-hidden m-2">
-                            {user.profile.image.url ?
+                            {/* {user.profile?.image.url ?
                                 <img src={`http://localhost:3001/${user.profile.image.url}`} className="img-fluid" alt="Profile" />
-                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="No user" />}
+                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="No user" />} */}
                         </div>
                         <div className="col-md-9">
                             <div className="card-body">
