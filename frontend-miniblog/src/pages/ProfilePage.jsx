@@ -78,9 +78,9 @@ export default function PofilePage() {
                 <div className="card mb-1">
                     <div className="row g-0">
                         <div className="col-md-2 overflow-hidden m-2">
-                            {currentUser.profile.image.url ?
+                            {/* {currentUser.profile?.image.url ?
                                 <img src={`http://localhost:3001/${currentUser.profile.image.url}`} className="img-fluid" alt="Profile" />
-                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="Profile" />}
+                                : <img src={`http://localhost:3001/profileImages/no-user-image.jpg`} className="img-fluid" alt="Profile" />} */}
                         </div>
                         <div className="col-md-9">
                             <div className="card-body">
