@@ -1,8 +1,8 @@
 const { getAllPosts, createPost, getPostById } = require("../models/Post")
-const { getUser, updateUser } = require("../models/User")
+const { getUser } = require("../models/User")
 const { insertTags } = require("../models/Tag")
 const { createComment } = require("../models/Comment")
-const { calculateTime, findTags, modifyNewTags } = require("../helpers")
+const { findTags, modifyNewTags } = require("../helpers")
 
 const postController = {
     getPosts: async (req, res) => {
