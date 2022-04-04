@@ -8,7 +8,7 @@ export default function TagPage() {
     const tag = useParams()
 
     useEffect(() => {
-        const url = `${BASE_URL}/posts/${tag.tag}`
+        const url = `${BASE_URL}/tags/${tag.tag}`
         const headers = {
             "Content-Type": "application/json"
         }
