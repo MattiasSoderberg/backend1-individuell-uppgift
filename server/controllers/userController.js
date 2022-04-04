@@ -38,9 +38,9 @@ const userController = {
             res.sendStatus(400)
         }
     },
-    login: (req, res) => {
+    login: async (req, res) => {
         const { username, password } = req.body
-        const user = login(username.toLowerCase(), password)
+        const user = await login(username.toLowerCase(), password)
         if (user) {
             jwt.sign({ username, id: user._id }, JWT_SECRET, (err, token) => {
                 if (err) {
