@@ -46,6 +46,10 @@ const getUser = async (username) => {
     return user
 }
 
+const getAllUsers = async () => {
+    return await User.find()
+}
+
 const updateUser = async (username, query) => {
     const user = await User.findOneAndUpdate({ username }, { query })
     return user
@@ -78,5 +82,5 @@ module.exports = {
     updateUser,
     followUser,
     unFollowUser,
-    User
+    getAllUsers
 }
