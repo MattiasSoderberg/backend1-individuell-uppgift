@@ -1,12 +1,11 @@
 const jwt = require("jsonwebtoken")
-const { User } = require("../models/User")
-const { TokenBlacklist } = require("../models/TokenBlacklist")
-const { comparePassword } = require("../helpers")
+const { getUser } = require("../models/User")
+const { getToken } = require("../models/TokenBlacklist")
 
 module.exports = {
     verifyUsername: async (req, res, next) => {
         const username = req.body.username.toLowerCase()
-        const user = await User.findOne({ username })
+        const user = await getUser(username)
 
         if (user) {
             res.status(403).json({ message: "Username already exists" })
@@ -19,7 +18,7 @@ module.exports = {
         if (bearerHeader) {
             const bearer = bearerHeader.split(" ")[0]
             const token = bearerHeader.split(" ")[1]
-            const blacklistedToken = await TokenBlacklist.findOne({ token })
+            const blacklistedToken = await getToken(token)
 
             if (token && bearer === "Bearer" && !blacklistedToken) {
                 jwt.verify(token, process.env.JWT_SECRET, (err, authData) => {
@@ -33,21 +32,6 @@ module.exports = {
             } else {
                 res.status(403).json({ message: "Invalid token or bearer" })
             }
-        }
-    },
-    verifyLogin: async (req, res, next) => {
-        const { userName, password } = req.body
-        const user = await User.findOne({ userName })
-
-        if (user) {
-            const passwordIsValid = await comparePassword(password, user.password)
-            if (passwordIsValid) {
-                next()
-            } else {
-                res.status(403).json({ message: "Incorrect username or password" })
-            }
-        } else {
-            res.status(403).json({ message: "Incorrect username or password" })
         }
     },
     checkEmptyFields: (req, res, next) => {
