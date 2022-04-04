@@ -6,11 +6,12 @@ const tagSchema = new mongoose.Schema({
 
 const Tag = mongoose.model("Tag", tagSchema)
 
-const getTags = async (tags) => {
-    return await Tag.find({ tag: { $in: tags } })
+const getAllTags = async () => {
+    return await Tag.find()
 }
+
 const insertTags = async (tags) => {
     return await Tag.insertMany(tags)
 }
 
-module.exports = { insertTags, getTags }
+module.exports = { insertTags, getAllTags }
